@@ -41,7 +41,7 @@ class LineFactorManager(FactorManager):
             code = ''.join(file_lines)
             # Debug
             root_logger.debug('Filename:{} Code:\n{}'.format(filename, code))
-            with open(os.path.join(work_dir, filepath), "w") as f:
+            with open(filepath, "w") as f:
                 f.write(code)
 
         return work_dir

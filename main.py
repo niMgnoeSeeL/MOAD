@@ -18,7 +18,7 @@ def get_parser():
     parser.add_argument(
         '-f', '--factor_level', help='Factor level',
         choices=['line', 'srcml'],
-        default='srcml')
+        default='line')
     parser.add_argument(
         '-d', '--doe_strategy', help='Design of experiment strategy',
         choices=['onehot', 'random', 'nhot', 'ff2l',

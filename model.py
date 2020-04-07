@@ -28,6 +28,10 @@ def get_parser():
         "-d", "--data_name", help="Data dir name", required=True
     )
     parser.add_argument(
+        '-f', '--factor_level', help='Factor level',
+        choices=['line', 'srcml'],
+        default='line')
+    parser.add_argument(
         "-i",
         "--inference",
         help="Inference algorithm",

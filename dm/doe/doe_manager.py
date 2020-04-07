@@ -106,7 +106,6 @@ class DoEManager(ABC):
                 ["f{}".format(i) for i in range(self._factor_size)]
             )
         )
-        root_logger.info("Plan saved.")
 
     def save_model(self, program_space):
         output_path = os.path.join(
