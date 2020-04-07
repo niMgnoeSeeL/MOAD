@@ -1,5 +1,5 @@
-#include "/home/bohrok/Documents/DM/lib/insert_criteria/lib/clib/stdio.h"
-#include "/home/bohrok/Documents/DM/lib/insert_criteria/lib/clib/stdlib.h"
+#include <stdio.h>
+#include <stdlib.h>
 int p(int j);
 int q(int k);
 int f1(int k);

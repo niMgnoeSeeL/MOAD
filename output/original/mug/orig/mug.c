@@ -1,6 +1,6 @@
-#include "/home/bohrok/Documents/DM/lib/insert_criteria/lib/clib/stdio.h"
-#include "/home/bohrok/Documents/DM/lib/insert_criteria/lib/clib/stdlib.h"
-#include "/home/bohrok/Documents/DM/lib/insert_criteria/lib/clib/stdbool.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 bool p(int i);
 bool q(int c);
 int h(int i);
