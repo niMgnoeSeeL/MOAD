@@ -6,15 +6,20 @@ root_logger = logging.getLogger()
 
 
 class FF2LDoEManager(DoEManager):
-
-    def __init__(self, factor_manager, response_manager, max_expr, seed=None,
-                 plan_path=None, expr_idx_range=None):
+    def __init__(
+        self,
+        factor_manager,
+        response_manager,
+        max_expr,
+        seed=None,
+        plan_path=None,
+        expr_idx_range=None,
+    ):
         if seed:
-            print('Numpy random seed: {}'.format(seed))
-            root_logger.debug('Numpy random seed: {}'.format(seed))
+            print("Numpy random seed: {}".format(seed))
+            root_logger.debug("Numpy random seed: {}".format(seed))
             np.random.seed(int(seed))
-        super().__init__(factor_manager, response_manager, max_expr,
-                         plan_path, expr_idx_range)
+        super().__init__(factor_manager, response_manager, max_expr, plan_path, expr_idx_range)
 
     def _init_factor_queue(self, plan_path=None, expr_idx_range=None):
         if plan_path is not None and expr_idx_range is not None:
@@ -27,9 +32,12 @@ class FF2LDoEManager(DoEManager):
             while factor_idx < self._factor_size:
                 factor_idx += 1
                 if factor_idx == power2:
-                    factor_list = np.hstack((
-                        np.vstack((factor_list, np.logical_not(factor_list))),
-                        np.array([[True] * power2 + [False] * power2]).reshape(power2 * 2, 1)))
+                    factor_list = np.hstack(
+                        (
+                            np.vstack((factor_list, np.logical_not(factor_list))),
+                            np.array([[True] * power2 + [False] * power2]).reshape(power2 * 2, 1),
+                        )
+                    )
                     power2 *= 2
                 else:
                     lhs_idx = factor_idx - int(power2 / 2) - 1

@@ -6,16 +6,22 @@ root_logger = logging.getLogger()
 
 
 class RandomDoEManager(DoEManager):
-
-    def __init__(self, factor_manager, response_manager, max_expr,
-                 threshold, seed=None, plan_path=None, expr_idx_range=None):
+    def __init__(
+        self,
+        factor_manager,
+        response_manager,
+        max_expr,
+        threshold,
+        seed=None,
+        plan_path=None,
+        expr_idx_range=None,
+    ):
         self._threshold = threshold
         if seed:
-            print('Numpy random seed: {}'.format(seed))
-            root_logger.debug('Numpy random seed: {}'.format(seed))
+            print("Numpy random seed: {}".format(seed))
+            root_logger.debug("Numpy random seed: {}".format(seed))
             np.random.seed(int(seed))
-        super().__init__(factor_manager, response_manager, max_expr,
-                         plan_path, expr_idx_range)
+        super().__init__(factor_manager, response_manager, max_expr, plan_path, expr_idx_range)
 
     def _init_factor_queue(self, plan_path=None, expr_idx_range=None):
         if plan_path is not None and expr_idx_range is not None:

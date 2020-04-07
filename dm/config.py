@@ -6,11 +6,10 @@ class Config:
         self.config = configparser.RawConfigParser()
         succ = self.config.read(filenames=config_path)
         if not len(succ):
-            raise Exception('Unable to load config(path:{})'.format(
-                config_path))
+            raise Exception("Unable to load config(path:{})".format(config_path))
 
     def write(self, file_path):
-        with open(file_path, 'w') as config_file:
+        with open(file_path, "w") as config_file:
             self.config.write(config_file)
 
     def set(self, session, option, value):
@@ -64,9 +63,9 @@ class Config:
             return default_value
         try:
             str_value = self.config.get(session, option)
-            if str_value == '':
+            if str_value == "":
                 return default_value
             else:
-                return str_value.lstrip().split('\n')
+                return str_value.lstrip().split("\n")
         except:
             return default_value

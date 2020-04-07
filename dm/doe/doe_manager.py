@@ -12,12 +12,7 @@ class DoEManager(ABC):
 
     @abstractmethod
     def __init__(
-        self,
-        factor_manager,
-        response_manager,
-        max_expr,
-        plan_path,
-        expr_idx_range=None,
+        self, factor_manager, response_manager, max_expr, plan_path, expr_idx_range=None,
     ):
         self._factor_size = factor_manager.size
         self._revise_factor = factor_manager.revise_factor
@@ -102,17 +97,13 @@ class DoEManager(ABC):
             np_matrix,
             delimiter=",",
             fmt="%d",
-            header="cnt," + ",".join(
-                ["f{}".format(i) for i in range(self._factor_size)]
-            )
+            header="cnt," + ",".join(["f{}".format(i) for i in range(self._factor_size)]),
         )
 
     def save_model(self, program_space):
         output_path = os.path.join(
             program_space.base_work_dir,
-            "expr_{}_{}.csv".format(
-                self._expr_idx_range.start, self._expr_idx_range.stop
-            ),
+            "expr_{}_{}.csv".format(self._expr_idx_range.start, self._expr_idx_range.stop),
         )
         matrix = []
         for k, v in self._matrix.items():
@@ -123,9 +114,7 @@ class DoEManager(ABC):
             np_matrix,
             delimiter=",",
             fmt="%d",
-            header=",".join(
-                ["f{}".format(i) for i in range(self._factor_size)]
-            )
+            header=",".join(["f{}".format(i) for i in range(self._factor_size)])
             + ",comp,"
             + ",".join(
                 [

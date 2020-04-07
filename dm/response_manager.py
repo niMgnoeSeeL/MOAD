@@ -14,9 +14,7 @@ class ResponseManager:
         self._num_crit = program_space.num_crit
 
         # Debug
-        root_logger.debug(
-            "self._compile_script = {}".format(self._compile_script)
-        )
+        root_logger.debug("self._compile_script = {}".format(self._compile_script))
 
     def get_response(self, program_path, save_log):
         comp_succ = False
@@ -26,22 +24,11 @@ class ResponseManager:
         comp_succ = False if comp_result is None else True
 
         if comp_succ:
-            exec_result = (
-                run_output(self._execute_script, program_path)
-                .rstrip()
-                .split("\n")[-1]
-            )
+            exec_result = run_output(self._execute_script, program_path).rstrip().split("\n")[-1]
             if "2" in exec_result:
-                raise Exception(
-                    "Grep returned '2'; exec_result: {}".format(exec_result)
-                )
+                raise Exception("Grep returned '2'; exec_result: {}".format(exec_result))
             else:
-                test_succ = list(
-                    map(
-                        lambda x: not (bool(int(x))),
-                        list(exec_result.rstrip()),
-                    )
-                )
+                test_succ = list(map(lambda x: not (bool(int(x))), list(exec_result.rstrip()),))
         else:
             test_succ = [False] * self._num_test * self._num_crit
 

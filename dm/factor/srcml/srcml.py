@@ -9,29 +9,41 @@ import copy
 
 root_logger = logging.getLogger()
 
-NS = {'ns': 'http://www.srcML.org/srcML/src',
-      'pos': 'http://www.srcML.org/srcML/position'}
+NS = {"ns": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcML/position"}
 
-LINEKEY = '{{{}}}line'.format(NS['pos'])
-COLUMNKEY = '{{{}}}column'.format(NS['pos'])
+LINEKEY = "{{{}}}line".format(NS["pos"])
+COLUMNKEY = "{{{}}}column".format(NS["pos"])
 
-basic_tag = ['expr_stmt', 'decl_stmt', 'function_decl', 'function']
-c_stmt_tag = basic_tag + ['if', 'while', 'for', 'do', 'break', 'continue',
-                          'return', 'switch', 'case', 'default', 'block',
-                          'label', 'goto', 'empty_stmt', 'typedef']
+basic_tag = ["expr_stmt", "decl_stmt", "function_decl", "function"]
+c_stmt_tag = basic_tag + [
+    "if",
+    "while",
+    "for",
+    "do",
+    "break",
+    "continue",
+    "return",
+    "switch",
+    "case",
+    "default",
+    "block",
+    "label",
+    "goto",
+    "empty_stmt",
+    "typedef",
+]
 # maybe should include <then>, <else>, <elseif>
 # Todo: Java tag
 
 
 def is_before(pos1: dict, pos2: dict) -> bool:
-    return (pos1['line'] < pos2['line'] or
-            (pos1['line'] == pos2['line'] and pos1['column'] <= pos2['column']))
+    return pos1["line"] < pos2["line"] or (
+        pos1["line"] == pos2["line"] and pos1["column"] <= pos2["column"]
+    )
 
 
 def node_statistics(node: ET.Element) -> str:
-    return '{}, {}, {}, {}, {}'.format(
-        node, node.tag, node.text, node.tail, node.attrib
-    )
+    return "{}, {}, {}, {}, {}".format(node, node.tag, node.text, node.tail, node.attrib)
 
 
 def xml_to_code(tree: ET) -> bytes:
@@ -42,22 +54,21 @@ def xml_to_code(tree: ET) -> bytes:
     :return: ByteString of code
     """
     # xml to file
-    fd, temp_path = tempfile.mkstemp(suffix='.xml')
+    fd, temp_path = tempfile.mkstemp(suffix=".xml")
     tree.write(temp_path)
     # run srcml
     try:
         result = subprocess.run(
-            ['srcml {}'.format(temp_path)],
+            ["srcml {}".format(temp_path)],
             shell=True,
-            executable='/bin/bash',
+            executable="/bin/bash",
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             timeout=500,
-            check=True
+            check=True,
         )
     except subprocess.SubprocessError as e:
-        root_logger.error('subprocess cmd: {}, stdout: {}'.format(e.cmd,
-                                                                  e.stdout))
+        root_logger.error("subprocess cmd: {}, stdout: {}".format(e.cmd, e.stdout))
         ret = e.stdout
     else:
         ret = result.stdout
@@ -82,25 +93,23 @@ def code_to_xml(code_path: str, pos_flag: bool) -> ET:
     :return: xml.etree.ElementTree.Element of source code
     """
     # get source code language
-    extension = '.' + str(os.path.basename(code_path).split('.')[-1])
+    extension = "." + str(os.path.basename(code_path).split(".")[-1])
     # copy source code to temp path
     fd, temp_path = tempfile.mkstemp(suffix=extension)
     shutil.copy(code_path, temp_path)
     # run srcML
     try:
         ret = subprocess.run(
-            [('srcml --position --tab=1 {}' if pos_flag else 'srcml {}').format(
-                temp_path)],
+            [("srcml --position --tab=1 {}" if pos_flag else "srcml {}").format(temp_path)],
             shell=True,
-            executable='/bin/bash',
+            executable="/bin/bash",
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             timeout=500,
-            check=True
+            check=True,
         )
     except subprocess.SubprocessError as e:
-        root_logger.error('subprocess cmd: {}, stdout: {}'.format(e.cmd,
-                                                                  e.stdout))
+        root_logger.error("subprocess cmd: {}, stdout: {}".format(e.cmd, e.stdout))
         os.close(fd)
         os.remove(temp_path)
         exit(1)
@@ -119,13 +128,11 @@ def get_position(node: ET.Element) -> ({}, {}):
     """
     for child in node.iter():
         if LINEKEY in child.attrib:
-            start = {'line': int(child.attrib[LINEKEY]),
-                     'column': int(child.attrib[COLUMNKEY])}
+            start = {"line": int(child.attrib[LINEKEY]), "column": int(child.attrib[COLUMNKEY])}
             break
     for child in reversed(list(node.iter())):
         if LINEKEY in child.attrib:
-            end = {'line': int(child.attrib[LINEKEY]),
-                   'column': int(child.attrib[COLUMNKEY])}
+            end = {"line": int(child.attrib[LINEKEY]), "column": int(child.attrib[COLUMNKEY])}
             break
     return start, end
 
@@ -140,7 +147,7 @@ def is_stmt_tag(tag: str) -> bool:
 
     # Todo java
     for stmt_tag in c_stmt_tag:
-        NS_tag = '{{{}}}{}'.format(NS['ns'], stmt_tag)
+        NS_tag = "{{{}}}{}".format(NS["ns"], stmt_tag)
         if NS_tag == tag:
             return True
     return False
@@ -155,26 +162,30 @@ def is_expr_tag(tag: str) -> bool:
     """
 
     # Todo java
-    return tag == '{{{}}}expr'.format(NS['ns'])
+    return tag == "{{{}}}expr".format(NS["ns"])
 
 
 def is_pos_node(node: ET.Element) -> bool:
-    return node.tag == '{{{}}}position'.format(NS['pos'])
+    return node.tag == "{{{}}}position".format(NS["pos"])
 
 
 def is_ORBS_print_node(node: ET.Element) -> bool:
     """
     Get node with expr tag, return if is is a printf statement logging ORBS log
     """
-    assert (node.tag == '{{{}}}expr'.format(NS['ns']))
-    expr_call_path = './ns:call'
-    expr_call_name_path = os.path.join(expr_call_path, 'ns:name')
+    assert node.tag == "{{{}}}expr".format(NS["ns"])
+    expr_call_path = "./ns:call"
+    expr_call_name_path = os.path.join(expr_call_path, "ns:name")
     expr_call_arg_literal_path = os.path.join(
-        expr_call_path, 'ns:argument_list/ns:argument/ns:expr/ns:literal')
+        expr_call_path, "ns:argument_list/ns:argument/ns:expr/ns:literal"
+    )
     expr_call_name = node.find(expr_call_name_path, NS)
     expr_call_arg_literal = node.find(expr_call_arg_literal_path, NS)
-    if expr_call_name is not None and expr_call_arg_literal is not \
-            None and expr_call_arg_literal.text.startswith('"\\nORBS'):
+    if (
+        expr_call_name is not None
+        and expr_call_arg_literal is not None
+        and expr_call_arg_literal.text.startswith('"\\nORBS')
+    ):
         return True
     else:
         return False
@@ -184,8 +195,8 @@ def is_standalone_ORBS_log_node(node: ET.Element) -> bool:
     """
     Get node with stmt tag, return if it is stand-alone ORBS log node or not
     """
-    expr_path = './ns:expr'
-    if node.tag == '{{{}}}expr_stmt'.format(NS['ns']):
+    expr_path = "./ns:expr"
+    if node.tag == "{{{}}}expr_stmt".format(NS["ns"]):
         expr_node = node.find(expr_path, NS)
         if expr_node is not None:
             return is_ORBS_print_node(expr_node)
@@ -197,9 +208,9 @@ def is_ternary_ORBS_log_node(node: ET.Element) -> bool:
     """
     get node with expr tag, return if it is ORBS ternary log or not
     """
-    ternary_node = node.find('.ns:ternary', NS)
+    ternary_node = node.find(".ns:ternary", NS)
     if ternary_node is not None:
-        ternary_then_expr = ternary_node.find('./ns:then/ns:expr', NS)
+        ternary_then_expr = ternary_node.find("./ns:then/ns:expr", NS)
         if ternary_then_expr is not None:
             return is_ORBS_print_node(ternary_then_expr)
         else:
@@ -212,28 +223,33 @@ def is_decl_node(node: ET.Element) -> bool:
     """
     get node with stmt tag, return if it is decl node or not
     """
-    return (node.tag == '{{{}}}function_decl'.format(NS['ns']) or
-            node.tag == '{{{}}}decl_stmt'.format(NS['ns']))
+    return node.tag == "{{{}}}function_decl".format(
+        NS["ns"]
+    ) or node.tag == "{{{}}}decl_stmt".format(NS["ns"])
+
 
 def is_init_node(node: ET.Element) -> bool:
     """
     get node with stmt tag, return if it is init node or not
     """
-    if node.tag == '{{{}}}expr_stmt'.format(NS['ns']):
-        expr_node = node.fine('./ns:expr', NS)
+    if node.tag == "{{{}}}expr_stmt".format(NS["ns"]):
+        expr_node = node.fine("./ns:expr", NS)
         if len(expr_node) == 3:
-            if (expr_node[0].tag == '{{{}}}name'.format(NS['ns']) and
-                expr_node[1].tag == '{{{}}}operator'.format(NS['ns']) and
-                expr_node[1].text == '=' and
-                expr_node[2].tag == '{{{}}}literal'.format(NS['ns'])):
+            if (
+                expr_node[0].tag == "{{{}}}name".format(NS["ns"])
+                and expr_node[1].tag == "{{{}}}operator".format(NS["ns"])
+                and expr_node[1].text == "="
+                and expr_node[2].tag == "{{{}}}literal".format(NS["ns"])
+            ):
                 return True
     return False
+
 
 def is_ret_node(node: ET.Element) -> bool:
     """
     get node with stmt tag, return if it is ret node or not
     """
-    return node.tag == '{{{}}}return'.format(NS['ns'])
+    return node.tag == "{{{}}}return".format(NS["ns"])
 
 
 def copy_tree(tree: ET) -> (ET, {ET.Element: ET.Element}):
@@ -271,8 +287,7 @@ def get_bfs_node_list(tree: ET) -> [ET.Element]:
     return node_list
 
 
-def get_parent_dict_and_stmt(tree: ET) -> ({ET.Element: ET.Element},
-                                           [ET.Element]):
+def get_parent_dict_and_stmt(tree: ET) -> ({ET.Element: ET.Element}, [ET.Element]):
     """
     Get child -> parent dict and stmt node list
 
@@ -295,21 +310,21 @@ def delete_node(parent_node: ET.Element, child_node: ET.Element):
     Remove child_node from parent_node.
     Make sure it does not break the code structure
     """
-    if 'block' in child_node.tag:
+    if "block" in child_node.tag:
         child_node_idx = list(parent_node).index(child_node)
         if child_node_idx:
             previous_node = parent_node[child_node_idx - 1]
             if previous_node.tail:
                 if previous_node.tail:
-                    previous_node.tail += ';'
+                    previous_node.tail += ";"
                 else:
-                    previous_node.tail = ';'
+                    previous_node.tail = ";"
         else:
             if parent_node.text:
-                parent_node.text += ';'
+                parent_node.text += ";"
             else:
-                parent_node.text = ';'
-    if 'block' in parent_node.tag:
+                parent_node.text = ";"
+    if "block" in parent_node.tag:
         child_node_idx = list(parent_node).index(child_node)
         if child_node.tail:
             if child_node_idx:
@@ -340,8 +355,8 @@ def remove_annotation_node(tree: ET, parent_dict) -> ET:
             parent_node = parent_dict[node]
             # 지우고, condition 넣고, parent_dict 수정하고
             delete_node(parent_node, node)
-            ternary_condition_expr = node.find('.ns:ternary/ns:condition/ns:expr', NS)
-            ternary_condition_expr.tail = ')'
+            ternary_condition_expr = node.find(".ns:ternary/ns:condition/ns:expr", NS)
+            ternary_condition_expr.tail = ")"
             parent_node
             parent_node.append(ternary_condition_expr)
             parent_dict.pop(node)
@@ -352,9 +367,9 @@ def get_criteria_line_col(log_node: ET.Element) -> (int, int):
     """
     Get line number and column number from ORBS log node
     """
-    arg_list_node = log_node.find('./ns:expr/ns:call/ns:argument_list', NS)
-    line = int(arg_list_node[1].find('./ns:expr/ns:literal', NS).text)
-    col = int(arg_list_node[2].find('./ns:expr/ns:literal', NS).text)
+    arg_list_node = log_node.find("./ns:expr/ns:call/ns:argument_list", NS)
+    line = int(arg_list_node[1].find("./ns:expr/ns:literal", NS).text)
+    col = int(arg_list_node[2].find("./ns:expr/ns:literal", NS).text)
     return line, col
 
 
@@ -366,20 +381,18 @@ def get_node_by_line_col(tree: ET, line: int, col: int) -> ET.Element:
     """
     for node in tree.getroot().iter():
         if LINEKEY in node.attrib:
-            if (line == int(node.attrib[LINEKEY]) and
-                    col == int(node.attrib[COLUMNKEY])):
+            if line == int(node.attrib[LINEKEY]) and col == int(node.attrib[COLUMNKEY]):
                 return node
     return None
 
 
-def get_parent_stmt_node(child_node: ET.Element,
-                         parent_dict: dict) -> ET.Element:
+def get_parent_stmt_node(child_node: ET.Element, parent_dict: dict) -> ET.Element:
     """
     Get the smallest parent node containing child node.
     If there's no such node return None.
     """
     parent_node = child_node
-    while(not is_stmt_tag(parent_node.tag)):
+    while not is_stmt_tag(parent_node.tag):
         parent_node = parent_dict[parent_node]
     return parent_node
 
@@ -402,23 +415,24 @@ def get_node_by_index(tree: ET, index: int) -> ET.Element:
     return node_list[index]
 
 
-def get_stmt_with_log_node(stmt_node: ET.Element,
-                           log_node_list: [ET.Element]) -> ET.Element:
+def get_stmt_with_log_node(stmt_node: ET.Element, log_node_list: [ET.Element]) -> ET.Element:
     """
     Get merged node which contains stmt_node and log nodes
     """
     add_log_node_list = list(
-        filter(lambda log_node: log_node not in stmt_node.iter(),
-               log_node_list))
+        filter(lambda log_node: log_node not in stmt_node.iter(), log_node_list)
+    )
     if not add_log_node_list:
         return stmt_node
     else:
-        ret = ET.Element('blank')
+        ret = ET.Element("blank")
         node_list = add_log_node_list + [stmt_node]
-        start_pos_list = list(map(lambda pos: (pos['line'], pos['column']),
-                                  map(lambda node: get_position(node)[0],
-                                      node_list)))
-        for node, start_pos in sorted(zip(node_list, start_pos_list),
-                                      key=lambda x: x[1]):
+        start_pos_list = list(
+            map(
+                lambda pos: (pos["line"], pos["column"]),
+                map(lambda node: get_position(node)[0], node_list),
+            )
+        )
+        for node, start_pos in sorted(zip(node_list, start_pos_list), key=lambda x: x[1]):
             ret.append(node)
         return ret

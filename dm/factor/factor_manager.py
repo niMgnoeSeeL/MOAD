@@ -23,22 +23,21 @@ class FactorManager(ABC):
         if only_code:
             os.makedirs(work_dir)
             for filename in self._program_space.files:
-                shutil.copy(os.path.join(self._program_space.orig_dir,
-                                         filename),
-                            os.path.join(work_dir, filename))
+                shutil.copy(
+                    os.path.join(self._program_space.orig_dir, filename),
+                    os.path.join(work_dir, filename),
+                )
         else:
-            work_dir = shutil.copytree(
-                self._program_space.orig_dir, work_dir)
-        with open(os.path.join(work_dir, 'factor'), 'w') as f:
+            work_dir = shutil.copytree(self._program_space.orig_dir, work_dir)
+        with open(os.path.join(work_dir, "factor"), "w") as f:
             f.write(str(factor))
         return work_dir
 
     def get_work_dir(self, iter_cnt, save_flag):
         if save_flag:
-            return os.path.join(self._program_space.base_work_dir,
-                                str(iter_cnt))
+            return os.path.join(self._program_space.base_work_dir, str(iter_cnt))
         else:
-            return os.path.join(self._program_space.base_work_dir, 'work')
+            return os.path.join(self._program_space.base_work_dir, "work")
 
     def revise_factor(self, factor):
         return factor

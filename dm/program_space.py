@@ -10,9 +10,7 @@ class ProgramSpace:
     def __init__(self, proj_name):
         self._proj_name = proj_name
         self._proj_path = os.path.join("output", "original", proj_name)
-        self._config = Config(
-            os.path.join(self._proj_path, "config", "config.ini")
-        )
+        self._config = Config(os.path.join(self._proj_path, "config", "config.ini"))
         self._orig_dir = os.path.join(
             self._proj_path, self._config.getstr("PROGRAMSPACE", "orig_dir")
         )
@@ -22,9 +20,7 @@ class ProgramSpace:
         )
         self._compile_script = self._config.getstr("SCRIPT", "compile_script")
         self._execute_script = self._config.getstr("SCRIPT", "execute_script")
-        self._terminate_script = self._config.getstr(
-            "SCRIPT", "terminate_script"
-        )
+        self._terminate_script = self._config.getstr("SCRIPT", "terminate_script")
         self._num_test = self.get_num_test()
         self._num_crit = self.get_num_crit()
 
