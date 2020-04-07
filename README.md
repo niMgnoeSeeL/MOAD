@@ -10,7 +10,9 @@
 
 ## Installation
 
-- Set DM_HOME to DM home directory
+- Set MOAD_HOME to MOAD repository root directory
+
+## How to create 
 
 ## Run
 

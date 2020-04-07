@@ -1,6 +1,6 @@
 #!/bin/bash
 
-orig_path="$DM_HOME/output/original/mug"
+orig_path="$MOAD_HOME/output/original/mug"
 
 numtc=$(ls -1q ${orig_path}/scripts/testsuite/ | wc -l)
 numcrit=$(cat ${orig_path}/scripts/criteria | wc -l)

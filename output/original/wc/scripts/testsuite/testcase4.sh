@@ -1,2 +1,2 @@
 #!/bin/bash
-./wc.exe < $DM_HOME/output/original/wc/inputs/test3
+./wc.exe < $MOAD_HOME/output/original/wc/inputs/test3
