@@ -11,7 +11,7 @@
 
 ## Installation
 
-- Set MOAD_HOME to MOAD repository root directory
+- Set evn `$MOAD_HOME` to MOAD repository root directory
 
 ## Run (Tutorial)
 
