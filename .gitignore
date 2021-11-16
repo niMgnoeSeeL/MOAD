@@ -3,3 +3,8 @@ __pycache__/
 lib/
 logs/
 
+output/experiment/
+output/model/
+output/original/*/oracle/
+output/unit/
+
